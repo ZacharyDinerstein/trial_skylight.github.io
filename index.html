@@ -1,7 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="js/popcorn-complete.min.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/script.js"></script>
+	<script src="js/scrollReveal.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<script src="js/lightbox.min.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">	
+	<link rel="stylesheet" href="css/lightbox.css">
+	<link rel="stylesheet" href="css/main.css">
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Rosario:400,700,400italic' rel='stylesheet' type='text/css'>
+	<title>skylight</title>
+	<script>
+        window.scrollReveal = new scrollReveal();
+    </script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var $pop = Popcorn(".main-video");
+			var $popOne = Popcorn(".outside-video");
+			var $popTwo = Popcorn(".outside-video2");
+			var dataGutter = $(".data-gutter");
+
+
+			function indicateData(whichIcon){
+				dataGutter.attr("automated","true");
+		        dataGutter.addClass("show-gutter");
+		        flashIcon(whichIcon);
+		        setTimeout(function(){
+		            dataGutter.removeClass("show-gutter");
+		            dataGutter.attr("automated","false");
+		        }, 3000)
+		    }
+
+		    function flashIcon(targetIcon){
+		        var icon = $(targetIcon);
+		        icon.addClass("flash-icon");
+		        setTimeout(function(){
+		            icon.removeClass("flash-icon");
+		        }, 3000)
+		    }
+
+			$pop.play();
+
+
+			//***** Context Link Firing Times *****//
+
+			$pop.code({
+				start: 39,
+				end: 44,
+				onStart: 
+					function( options ) {
+						document.getElementById('contextLink').innerHTML = "<button type='button' class='btn btn-inverse btn-sm'><i class='fa fa-play'></i> Hear from other Guatemalans </button>"
+					},
+				onEnd:
+					function( options ) {
+						document.getElementById('contextLink').innerHTML = "<button type='button' class='btn btn-inverse btn-sm archivalButton'><i class='fa fa-play'></i></button>"
+					}, 
+				target: "contextLink"
+			});
+
+			$pop.code({
+				start: 60,
+				end: 65,
+				onStart: 
+					function( options ) {
+						document.getElementById('contextLink1').innerHTML = "<button type='button' class='btn btn-inverse btn-sm secondButton'><i class='fa fa-play'></i> Hear from Ríos Montt's daughter</button>"
+					},
+				onEnd:
+					function( options ) {
+						document.getElementById('contextLink1').innerHTML = "<button type='button' class='btn btn-inverse btn-sm secondButton archivalButton'><i class='fa fa-play'></i></button>"
+					},
+				target: "contextLink1"
+			});
+
+
+			//***** Data Gutter Firing Times *****//
+
+			$pop.code({
+				start: 3,
+				onStart: function() {
+					indicateData(".fa-camera");
+				},
+				target: "data-gutter"
+			});
+
+			$pop.code({
+				start: 14,
+				onStart: function() {
+					indicateData(".fa-file-text-o");
+				},
+				target: "data-gutter"
+			});	
+
+			$pop.code({
+				start: 94,
+				onStart: function(){
+					indicateData(".fa-newspaper-o");
+				},
+				target: "data-gutter"
+			});
+
+
+
+			//***** User Triggers *****//
+
+			document.getElementById('contextLink').onclick = function () {
+				$pop.pause();
+				$('.main-video').removeClass('active');
+				$('.outside-video').addClass('active');
+				$popOne.load();
+				$popOne.play();
+				$(document.getElementById('contextLink').innerHTML = "<button type='button' class='btn btn-inverse btn-sm'>Return to Trial</button>");
+				document.getElementById('contextLink').onclick = function () {
+					$popOne.pause();
+					$('.outside-video').removeClass('active');
+					$('.main-video').addClass('active');
+					$pop.play();
+					$(document.getElementById('contextLink').innerHTML = "<button type='button' class='btn btn-inverse btn-sm archivalButton'><i class='fa fa-play'></button>")
+				}
+			}
+
+			document.getElementById('contextLink1').onclick = function () {
+				$pop.pause();
+				$('.main-video').removeClass('active');
+				$('.outside-video2').addClass('active');
+				// var $popTwo = Popcorn(".outside-video2");
+				$popTwo.load();
+				$popTwo.play();
+				$(document.getElementById('contextLink1').innerHTML = "<button type='button' class='btn btn-inverse btn-sm secondButton'>Return to Trial</button>")
+				document.getElementById('contextLink1').onclick = function () {
+					$popTwo.pause();
+					$('.outside-video2').removeClass('active');
+					$('.main-video').addClass('active');
+					$pop.play();
+					$(document.getElementById('contextLink1').innerHTML = "<button type='button' class='btn btn-inverse btn-sm secondButton archivalButton'><i class='fa fa-play'></i></button>");
+				}
+			}
+
+			// When Icon is clicked, pause video.
+			$('.fa').click(function(){
+		        $pop.pause();
+		        $popOne.pause();
+		        $popTwo.pause();
+		    });
+
+			//When body of doc is clicked, play current video.
+		    $('html').click(function(e) {                    
+			   if(!$(e.target).hasClass('lb-container') ){
+			        var currentVideoClass = $(".active").attr("class").split(' ')[0];
+			        var currentVideo = Popcorn("." + currentVideoClass);
+			        currentVideo.play();
+			   }
+			}); 
+
+		}, false);
+	</script>
+</head>
 <body>
-	<h1>Hello World</h1>
-	<p>I'm hosted with GitHub Pages.</p>
+	<div class="container-fluid">
+		<main>
+			<div class="main-video-wrapper">
+				<video play loop controls class="main-video active" pop-num="pop">
+					<source src="https://s3.amazonaws.com/skylighthackathon/testimoy720.mp4" type="video/mp4"/>
+				</video>
+				<video controls class="outside-video" pop-num="popOne">
+					<source src="https://s3.amazonaws.com/skylighthackathon/vox720.mp4" type="video/mp4"/>
+				</video>
+				<video play controls class="outside-video2" pop-num="popTwo">
+					<source src="https://s3.amazonaws.com/skylighthackathon/zury720.mp4" type="video/mp4"/>
+				</video>
+			</div>
+			<div class="popup-links">
+				<div id="contextLink"></div>
+				<div id="contextLink1"></div>
+				<div id="contextLink2"></div>
+				<div id="contextLink2"></div>
+			</div>
+			<div class="data-gutter col-xs-1" automated="false">
+				<div class="relative">
+					<a href="img/Selection_Witness.jpg" data-lightbox="image-1" data-title="Selection Whitness'">
+						<i class="fa fa-camera"></i>
+					</a>
+				</div>
+				<div class="relative">
+					<a href="img/Prensa_Libre_130322.jpg" data-lightbox="image-2" data-title="From 'Prensa Libre'">
+						<i class="fa fa-file-text-o"></i>
+					</a>
+				</div>
+				<div class="relative">
+					<a href="img/Ixil_Triangle_2.jpg" data-lightbox="image-3" data-title="Triangle">
+						<i class="fa fa-newspaper-o"></i>
+					</a>
+				</div>
+			</div>
+		</main>
+	</div>
 </body>
 </html>
